@@ -1,25 +1,46 @@
-import logo from './logo.svg';
-import './App.css';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+import React, {useState} from "react";
+import {
+  BrowserRouter as Router,
+  useRoutes,
+} from "react-router-dom";
+import  Login from './components/Login'
+import  Logout from './components/Logout'
+import Box from "@mui/material/Box";
+import Home from "./components/Home"
+import MiniDrawer from './components/Sidebar'
+
+
+
+const App = (props) => { 
+  let routes = useRoutes([
+    { path: "/", element: props.isLoggedIn ? <Home  />: <Login setLoggedIN={props.setLoggedStatus} /> },
+    { path: "/home", element: props.isLoggedIn ? <Home  />: <Login setLoggedIN={props.setLoggedStatus} /> },
+    { path: "/login", element: <Login setLoggedIN={props.setLoggedStatus} /> },
+    { path: "/logout", element: <Login setLoggedIN={props.setLoggedStatus} /> },
+  ]);
+  return routes;
 }
 
-export default App;
+const AppWrapper = () => {
+  const [isLoggedIn, setLoggedIn] = useState(true);
+
+  const setLoggedIN = () => {
+    setLoggedIn(!isLoggedIn);
+  }
+  let sidebar;
+  if(isLoggedIn) {
+    sidebar = <MiniDrawer setLoggedStatus={setLoggedIN} />
+  }
+  
+  return (
+    <Router>
+      <Box sx={{ display: "flex" }}>
+        {sidebar}
+        <App isLoggedIn={isLoggedIn} setLoggedStatus={setLoggedIN}  />
+      </Box>      
+    </Router>
+  );
+};
+
+export default AppWrapper;
